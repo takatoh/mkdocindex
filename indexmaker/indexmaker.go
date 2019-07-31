@@ -52,6 +52,11 @@ func New(path string) *IndexMaker {
 func (m *IndexMaker) Make() {
 	m.getEntries()
 	m.makeIndex()
+
+	for _, d := range m.Directories {
+		maker := New(d)
+		maker.Make()
+	}
 }
 
 func (m *IndexMaker) getEntries() {

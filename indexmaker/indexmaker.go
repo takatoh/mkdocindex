@@ -1,7 +1,6 @@
 package indexmaker
 
 import (
-//	"fmt"
 	"os"
 	"path/filepath"
 	"strings"

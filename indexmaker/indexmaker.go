@@ -4,6 +4,7 @@ import (
 //	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -54,10 +55,16 @@ func (m *IndexMaker) Make() {
 }
 
 func (m *IndexMaker) getEntries() {
+	var entries []string
 	var directories []string
 	var files []string
 
-	entries, _ := filepath.Glob(m.Path + "/*")
+	ents, _ := filepath.Glob(m.Path + "/*")
+	for _, e := range ents {
+		if strings.Index(e, ".") != 0 {
+			entries = append(entries, e)
+		}
+	}
 
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
@@ -75,6 +82,5 @@ func (m *IndexMaker) getEntries() {
 func (m *IndexMaker) makeIndex() {
 	t, _ := template.New("index").Parse(tmpl)
 	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
-
 	t.ExecuteTemplate(w, "index", m)
 }

@@ -85,3 +85,22 @@ func (m *IndexMaker) makeIndex() {
 	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
 	t.ExecuteTemplate(w, "index", m)
 }
+
+
+type IndexInfo struct {
+	Name        string
+	Directories []string
+	Files       []string
+}
+
+func newIndexInfo(m *IndexMaker) *IndexInfo {
+	p := new(IndexInfo)
+	p.Name = filepath.Base(m.Path)
+	for _, d := range m.Directories {
+		p.Directories = append(p.Directories, d)
+	}
+	for _, f := range m.Files {
+		p.Files = append(p.Files, f)
+	}
+	return p
+}

@@ -21,14 +21,14 @@ const (
     <h2>Directories</h2>
     <ul>
     {{range $i, $v := .Directories}}
-      <li>{{index $.Directories $i}}</li>
+      <li><a href="{{index $.Directories $i}}/index.html">{{index $.Directories $i}}</a></li>
     {{end}}
     </ul>
 
     <h2>Files</h2>
     <ul>
     {{range $i, $v := .Files}}
-      <li>{{index $.Files $i}}</li>
+      <li><a href="{{index $.Files $i}}">{{index $.Files $i}}</a></li>
     {{end}}
     </ul>
   </body>

@@ -12,7 +12,7 @@ const (
 	tmpl = `<!DOCTYPE html>
 <html>
   <head>
-    <title>Index of directory</title>
+    <title>{{.Name}}</title>
   </head>
   <body>
     <h1>{{.Name}}</h1>
@@ -66,7 +66,7 @@ func (m *IndexMaker) getEntries() {
 	ents, _ := filepath.Glob(m.Path + "/*")
 	for _, e := range ents {
 		e2 := filepath.Base(e)
-		if strings.Index(e2, ".") != 0 && strings.Index(e2, "index.html") < 0 && strings.Index(e2, ".exe") < 0 {
+		if strings.Index(e2, ".") != 0 && e2 != "index.html" && strings.Index(e2, ".exe") < 0 {
 			entries = append(entries, e)
 		}
 	}

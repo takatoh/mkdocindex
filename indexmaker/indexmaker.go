@@ -86,9 +86,9 @@ func (m *IndexMaker) getEntries() {
 }
 
 func (m *IndexMaker) makeIndex() {
-	os.Remove("index.html")
+	os.Remove(m.Path + "/index.html")
 	t, _ := template.New("index").Parse(tmpl)
-	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
+	w, _ := os.OpenFile(m.Path + "/index.html", os.O_WRONLY|os.O_CREATE, 0600)
 	t.ExecuteTemplate(w, "index", newIndexInfo(m))
 }
 

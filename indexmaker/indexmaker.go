@@ -19,24 +19,39 @@ func New(path string) *IndexMaker {
 }
 
 func (i *IndexMaker) Make() {
-	entries, _ := filepath.Glob(i.path + "/*")
+	directories, files := i.getEntries()
+
+	i.makeIndex(directories, files)
+}
+
+func (m *IndexMaker) getEntries() ([]string, []string) {
+	var directories []string
+	var files []string
+
+	entries, _ := filepath.Glob(m.path + "/*")
 
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
 		if finfo.IsDir() {
-			i.directories = append(i.directories, f)
+			directories = append(directories, f)
 		} else {
-			i.files = append(i.files, f)
+			files = append(files, f)
 		}
 	}
 
+	return directories, files
+}
+
+func (m *IndexMaker) makeIndex(directories, files []string) {
+	fmt.Println(m.path)
+	fmt.Println("")
 	fmt.Println("Directories:")
-	for _, d := range i.directories {
+	for _, d := range directories {
 		fmt.Println(d)
 	}
 	fmt.Println("")
 	fmt.Println("Files:")
-	for _, f := range i.files {
+	for _, f := range files {
 		fmt.Println(f)
 	}
 }

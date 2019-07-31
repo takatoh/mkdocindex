@@ -44,15 +44,17 @@ func (m *IndexMaker) getEntries() {
 }
 
 func (m *IndexMaker) makeIndex() {
-	fmt.Println(m.path)
-	fmt.Println("")
-	fmt.Println("Directories:")
+	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
+
+	fmt.Fprintln(w, m.path)
+	fmt.Fprintln(w, "")
+	fmt.Fprintln(w, "Directories:")
 	for _, d := range m.directories {
-		fmt.Println(d)
+		fmt.Fprintln(w, d)
 	}
-	fmt.Println("")
-	fmt.Println("Files:")
+	fmt.Fprintln(w, "")
+	fmt.Fprintln(w, "Files:")
 	for _, f := range m.files {
-		fmt.Println(f)
+		fmt.Fprintln(w, f)
 	}
 }

@@ -12,31 +12,31 @@ type IndexMaker struct {
 	files       []string
 }
 
-func New(path) {
+func New(path string) *IndexMaker {
 	p := new(IndexMaker)
 	p.path = path
 	return p
 }
 
-func (i *IndexMaker) Make {
-	entries, _ := filepath.Glob(path + "/*")
+func (i *IndexMaker) Make() {
+	entries, _ := filepath.Glob(i.path + "/*")
 
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
 		if finfo.IsDir() {
-			directories = append(directories, f)
+			i.directories = append(i.directories, f)
 		} else {
-			files = append(files, f)
+			i.files = append(i.files, f)
 		}
 	}
 
 	fmt.Println("Directories:")
-	for _, d := range directories {
+	for _, d := range i.directories {
 		fmt.Println(d)
 	}
 	fmt.Println("")
 	fmt.Println("Files:")
-	for _, f := range files {
+	for _, f := range i.files {
 		fmt.Println(f)
 	}
 }

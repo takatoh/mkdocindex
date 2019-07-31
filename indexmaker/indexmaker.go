@@ -16,7 +16,7 @@ const (
     <title>Index of directory</title>
   </head>
   <body>
-    <h1>{{.Path}}</h1>
+    <h1>{{.Name}}</h1>
 
     <h2>Directories</h2>
     <ul>
@@ -83,7 +83,7 @@ func (m *IndexMaker) getEntries() {
 func (m *IndexMaker) makeIndex() {
 	t, _ := template.New("index").Parse(tmpl)
 	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
-	t.ExecuteTemplate(w, "index", m)
+	t.ExecuteTemplate(w, "index", newIndexInfo(m))
 }
 
 
@@ -97,10 +97,10 @@ func newIndexInfo(m *IndexMaker) *IndexInfo {
 	p := new(IndexInfo)
 	p.Name = filepath.Base(m.Path)
 	for _, d := range m.Directories {
-		p.Directories = append(p.Directories, d)
+		p.Directories = append(p.Directories, filepath.Base(d))
 	}
 	for _, f := range m.Files {
-		p.Files = append(p.Files, f)
+		p.Files = append(p.Files, filepath.Base(f))
 	}
 	return p
 }

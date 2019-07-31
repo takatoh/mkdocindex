@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 )
 
+
 type IndexMaker struct {
 	path        string
 	directories []string
@@ -18,13 +19,12 @@ func New(path string) *IndexMaker {
 	return p
 }
 
-func (i *IndexMaker) Make() {
-	directories, files := i.getEntries()
-
-	i.makeIndex(directories, files)
+func (m *IndexMaker) Make() {
+	m.getEntries()
+	m.makeIndex()
 }
 
-func (m *IndexMaker) getEntries() ([]string, []string) {
+func (m *IndexMaker) getEntries() {
 	var directories []string
 	var files []string
 
@@ -39,19 +39,20 @@ func (m *IndexMaker) getEntries() ([]string, []string) {
 		}
 	}
 
-	return directories, files
+	m.directories = directories
+	m.files = files
 }
 
-func (m *IndexMaker) makeIndex(directories, files []string) {
+func (m *IndexMaker) makeIndex() {
 	fmt.Println(m.path)
 	fmt.Println("")
 	fmt.Println("Directories:")
-	for _, d := range directories {
+	for _, d := range m.directories {
 		fmt.Println(d)
 	}
 	fmt.Println("")
 	fmt.Println("Files:")
-	for _, f := range files {
+	for _, f := range m.files {
 		fmt.Println(f)
 	}
 }

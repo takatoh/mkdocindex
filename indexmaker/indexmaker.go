@@ -1,21 +1,50 @@
 package indexmaker
 
 import (
-	"fmt"
+//	"fmt"
 	"os"
 	"path/filepath"
+	"text/template"
+)
+
+
+const (
+	tmpl = `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Index of directory</title>
+  </head>
+  <body>
+    <h1>{{.Path}}</h1>
+
+    <h2>Directories</h2>
+    <ul>
+    {{range $i, $v := .Directories}}
+      <li>{{index $.Directories $i}}</li>
+    {{end}}
+    </ul>
+
+    <h2>Files</h2>
+    <ul>
+    {{range $i, $v := .Files}}
+      <li>{{index $.Files $i}}</li>
+    {{end}}
+    </ul>
+  </body>
+</html>
+`
 )
 
 
 type IndexMaker struct {
-	path        string
-	directories []string
-	files       []string
+	Path        string
+	Directories []string
+	Files       []string
 }
 
 func New(path string) *IndexMaker {
 	p := new(IndexMaker)
-	p.path = path
+	p.Path = path
 	return p
 }
 
@@ -28,7 +57,7 @@ func (m *IndexMaker) getEntries() {
 	var directories []string
 	var files []string
 
-	entries, _ := filepath.Glob(m.path + "/*")
+	entries, _ := filepath.Glob(m.Path + "/*")
 
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
@@ -39,22 +68,13 @@ func (m *IndexMaker) getEntries() {
 		}
 	}
 
-	m.directories = directories
-	m.files = files
+	m.Directories = directories
+	m.Files = files
 }
 
 func (m *IndexMaker) makeIndex() {
+	t, _ := template.New("index").Parse(tmpl)
 	w, _ := os.OpenFile("index.html", os.O_WRONLY|os.O_CREATE, 0600)
 
-	fmt.Fprintln(w, m.path)
-	fmt.Fprintln(w, "")
-	fmt.Fprintln(w, "Directories:")
-	for _, d := range m.directories {
-		fmt.Fprintln(w, d)
-	}
-	fmt.Fprintln(w, "")
-	fmt.Fprintln(w, "Files:")
-	for _, f := range m.files {
-		fmt.Fprintln(w, f)
-	}
+	t.ExecuteTemplate(w, "index", m)
 }

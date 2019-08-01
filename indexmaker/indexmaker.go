@@ -45,14 +45,14 @@ const (
 
 
 type IndexMaker struct {
-	Path        string
-	Directories []string
-	Files       []string
+	path        string
+	directories []string
+	files       []string
 }
 
 func New(path string) *IndexMaker {
 	p := new(IndexMaker)
-	p.Path = path
+	p.path = path
 	return p
 }
 
@@ -60,7 +60,7 @@ func (m *IndexMaker) Make() {
 	m.getEntries()
 	m.makeIndex()
 
-	for _, d := range m.Directories {
+	for _, d := range m.directories {
 		maker := New(d)
 		maker.Make()
 	}
@@ -71,7 +71,7 @@ func (m *IndexMaker) getEntries() {
 	var directories []string
 	var files []string
 
-	ents, _ := filepath.Glob(m.Path + "/*")
+	ents, _ := filepath.Glob(m.path + "/*")
 	for _, e := range ents {
 		e2 := filepath.Base(e)
 		if strings.Index(e2, ".") != 0 && e2 != "index.html" && e2 != "mkdocindex.exe" {
@@ -88,14 +88,14 @@ func (m *IndexMaker) getEntries() {
 		}
 	}
 
-	m.Directories = directories
-	m.Files = files
+	m.directories = directories
+	m.files = files
 }
 
 func (m *IndexMaker) makeIndex() {
-	os.Remove(m.Path + "/index.html")
+	os.Remove(m.path + "/index.html")
 	t, _ := template.New("index").Parse(tmpl)
-	w, _ := os.OpenFile(m.Path + "/index.html", os.O_WRONLY|os.O_CREATE, 0600)
+	w, _ := os.OpenFile(m.path + "/index.html", os.O_WRONLY|os.O_CREATE, 0600)
 	t.ExecuteTemplate(w, "index", newIndexInfo(m))
 }
 
@@ -108,11 +108,11 @@ type IndexInfo struct {
 
 func newIndexInfo(m *IndexMaker) *IndexInfo {
 	p := new(IndexInfo)
-	p.Name = filepath.Base(m.Path)
-	for _, d := range m.Directories {
+	p.Name = filepath.Base(m.path)
+	for _, d := range m.directories {
 		p.Directories = append(p.Directories, filepath.Base(d))
 	}
-	for _, f := range m.Files {
+	for _, f := range m.files {
 		p.Files = append(p.Files, filepath.Base(f))
 	}
 	return p

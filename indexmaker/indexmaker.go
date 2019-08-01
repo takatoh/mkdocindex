@@ -17,7 +17,7 @@ const (
   <body>
     <h1>{{.Name}}</h1>
 
-    {{if (len .Directories) gt 0}}
+    {{if gt (len .Directories) 0}}
     <h2>Directories</h2>
     <ul>
       {{range $i, $v := .Directories}}
@@ -26,7 +26,7 @@ const (
     </ul>
     {{end}}
 
-    {{if (len .Files) gt 0}}
+    {{if gt (len .Files) 0}}
     <h2>Files</h2>
     <ul>
       {{range $i, $v := .Files}}

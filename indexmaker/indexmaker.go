@@ -17,6 +17,10 @@ const (
   <body>
     <h1>{{.Name}}</h1>
 
+    {{if and (eq (len .Directories) 0) (eq (len .Files) 0)}}
+    <p><b>No items</b></p>
+    {{end}}
+
     {{if gt (len .Directories) 0}}
     <h2>Directories</h2>
     <ul>

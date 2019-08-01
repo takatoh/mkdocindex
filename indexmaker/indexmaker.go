@@ -74,7 +74,7 @@ func (m *IndexMaker) getEntries() {
 	ents, _ := filepath.Glob(m.Path + "/*")
 	for _, e := range ents {
 		e2 := filepath.Base(e)
-		if strings.Index(e2, ".") != 0 && e2 != "index.html" && strings.Index(e2, ".exe") < 0 {
+		if strings.Index(e2, ".") != 0 && e2 != "index.html" && e2 != "mkdocindex.exe" {
 			entries = append(entries, e)
 		}
 	}

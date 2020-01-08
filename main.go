@@ -24,7 +24,14 @@ func main() {
 		os.Exit(0)
 	}
 
-	homeDir, _ := filepath.Abs(".")
+	var dir string
+	if len(flag.Args()) > 0 {
+		dir = flag.Args()[0]
+		fmt.Println(dir)
+	} else {
+		dir = "."
+	}
+	homeDir, _ := filepath.Abs(dir)
 
 	maker := indexmaker.New(homeDir)
 	maker.Make()

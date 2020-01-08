@@ -20,6 +20,7 @@ func main() {
 		fmt.Fprintf(os.Stderr,
 `Usage:
   %s [options] [dir]
+
 Options:
 `, os.Args[0])
 		flag.PrintDefaults()

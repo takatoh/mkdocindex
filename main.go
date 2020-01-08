@@ -36,7 +36,6 @@ Options:
 	var dir string
 	if len(flag.Args()) > 0 {
 		dir = flag.Args()[0]
-		fmt.Println(dir)
 	} else {
 		dir = "."
 	}

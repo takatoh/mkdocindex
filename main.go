@@ -11,7 +11,7 @@ import (
 
 
 const (
-	progVersion = "v0.2.2"
+	progVersion = "v0.3.0"
 )
 
 

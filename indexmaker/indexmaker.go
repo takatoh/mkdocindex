@@ -24,7 +24,7 @@ func New(path string) *IndexMaker {
 func (m *IndexMaker) Make() {
 	m.getEntries()
 	info := indexinfo.New(m.path, m.directories, m.files)
-	htmlgenerator.MakeIndex(info)
+	htmlgenerator.Generate(info)
 
 	for _, d := range m.directories {
 		maker := New(d)

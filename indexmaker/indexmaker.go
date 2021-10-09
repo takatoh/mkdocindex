@@ -4,9 +4,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"html/template"
-)
 
+	"github.com/takatoh/mkdocindex/htmlgenerator"
+	"github.com/takatoh/mkdocindex/indexinfo"
+)
 
 const (
 	tmpl = `<!DOCTYPE html>
@@ -44,7 +45,6 @@ const (
 `
 )
 
-
 type IndexMaker struct {
 	path        string
 	directories []string
@@ -59,7 +59,8 @@ func New(path string) *IndexMaker {
 
 func (m *IndexMaker) Make() {
 	m.getEntries()
-	m.makeIndex()
+	info := indexinfo.New(m.path, m.directories, m.files)
+	htmlgenerator.MakeIndex(info)
 
 	for _, d := range m.directories {
 		maker := New(d)
@@ -91,30 +92,4 @@ func (m *IndexMaker) getEntries() {
 
 	m.directories = directories
 	m.files = files
-}
-
-func (m *IndexMaker) makeIndex() {
-	os.Remove(m.path + "/index.html")
-	t, _ := template.New("index").Parse(tmpl)
-	w, _ := os.OpenFile(m.path + "/index.html", os.O_WRONLY|os.O_CREATE, 0600)
-	t.ExecuteTemplate(w, "index", newIndexInfo(m))
-}
-
-
-type IndexInfo struct {
-	Name        string
-	Directories []string
-	Files       []string
-}
-
-func newIndexInfo(m *IndexMaker) *IndexInfo {
-	p := new(IndexInfo)
-	p.Name = filepath.Base(m.path)
-	for _, d := range m.directories {
-		p.Directories = append(p.Directories, filepath.Base(d))
-	}
-	for _, f := range m.files {
-		p.Files = append(p.Files, filepath.Base(f))
-	}
-	return p
 }

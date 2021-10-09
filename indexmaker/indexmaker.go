@@ -11,7 +11,7 @@ import (
 
 type IndexMaker struct {
 	path        string
-	directories []string
+	directories []*IndexMaker
 	files       []string
 }
 
@@ -22,19 +22,23 @@ func New(path string) *IndexMaker {
 }
 
 func (m *IndexMaker) Make() {
+	var dirs []string
+
+	for _, d := range m.directories {
+		dirs = append(dirs, d.path)
+	}
 	m.getEntries()
-	info := indexinfo.New(m.path, m.directories, m.files)
+	info := indexinfo.New(m.path, dirs, m.files)
 	htmlgenerator.Generate(info)
 
 	for _, d := range m.directories {
-		maker := New(d)
-		maker.Make()
+		d.Make()
 	}
 }
 
 func (m *IndexMaker) getEntries() {
 	var entries []string
-	var directories []string
+	var directories []*IndexMaker
 	var files []string
 
 	ents, _ := filepath.Glob(m.path + "/*")
@@ -48,7 +52,7 @@ func (m *IndexMaker) getEntries() {
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
 		if finfo.IsDir() {
-			directories = append(directories, f)
+			directories = append(directories, New(f))
 		} else {
 			files = append(files, f)
 		}

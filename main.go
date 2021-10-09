@@ -9,16 +9,14 @@ import (
 	"github.com/takatoh/mkdocindex/indexmaker"
 )
 
-
 const (
 	progVersion = "v0.3.0"
 )
 
-
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr,
-`Usage:
+			`Usage:
   %s [options] [dir]
 
 Options:
@@ -39,8 +37,8 @@ Options:
 	} else {
 		dir = "."
 	}
-	homeDir, _ := filepath.Abs(dir)
+	root, _ := filepath.Abs(dir)
 
-	maker := indexmaker.New(homeDir)
+	maker := indexmaker.New(root)
 	maker.Make()
 }

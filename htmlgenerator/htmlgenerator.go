@@ -43,7 +43,7 @@ const (
 `
 )
 
-func MakeIndex(info *indexinfo.IndexInfo) {
+func Generate(info *indexinfo.IndexInfo) {
 	os.Remove(info.Path + "/index.html")
 	t, _ := template.New("index").Parse(tmpl)
 	w, _ := os.OpenFile(info.Path+"/index.html", os.O_WRONLY|os.O_CREATE, 0600)

@@ -18,7 +18,7 @@ type IndexMaker struct {
 func New(path string) *IndexMaker {
 	p := new(IndexMaker)
 	p.path = path
-	p.getEntries()
+	p.read()
 	return p
 }
 
@@ -36,7 +36,7 @@ func (m *IndexMaker) Make() {
 	}
 }
 
-func (m *IndexMaker) getEntries() {
+func (m *IndexMaker) read() {
 	var entries []string
 
 	ents, _ := filepath.Glob(m.path + "/*")

@@ -38,8 +38,6 @@ func (m *IndexMaker) Make() {
 
 func (m *IndexMaker) getEntries() {
 	var entries []string
-	var directories []*IndexMaker
-	var files []string
 
 	ents, _ := filepath.Glob(m.path + "/*")
 	for _, e := range ents {
@@ -52,12 +50,9 @@ func (m *IndexMaker) getEntries() {
 	for _, f := range entries {
 		finfo, _ := os.Stat(f)
 		if finfo.IsDir() {
-			directories = append(directories, New(f))
+			m.directories = append(m.directories, New(f))
 		} else {
-			files = append(files, f)
+			m.files = append(m.files, f)
 		}
 	}
-
-	m.directories = directories
-	m.files = files
 }

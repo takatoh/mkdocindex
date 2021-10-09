@@ -18,6 +18,7 @@ type IndexMaker struct {
 func New(path string) *IndexMaker {
 	p := new(IndexMaker)
 	p.path = path
+	p.getEntries()
 	return p
 }
 
@@ -27,7 +28,6 @@ func (m *IndexMaker) Make() {
 	for _, d := range m.directories {
 		dirs = append(dirs, d.path)
 	}
-	m.getEntries()
 	info := indexinfo.New(m.path, dirs, m.files)
 	htmlgenerator.Generate(info)
 

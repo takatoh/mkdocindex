@@ -56,3 +56,16 @@ func (m *IndexMaker) read() {
 		}
 	}
 }
+
+func (m *IndexMaker) MakeMonolithic() {
+	infoTree := m.ConvertInfoMonolithic(2)
+	htmlgenerator.GenerateMonolithic(infoTree)
+}
+
+func (m *IndexMaker) ConvertInfoMonolithic(level uint8) *indexinfo.IndexInfoMonolithic {
+	info := indexinfo.NewMonolithic(m.path, m.files, level)
+	for _, d := range m.directories {
+		info.Directories = append(info.Directories, d.ConvertInfoMonolithic(level+1))
+	}
+	return info
+}

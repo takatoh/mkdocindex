@@ -98,7 +98,7 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 	infoM := newInfoMonolithic(info)
 	os.Remove(info.Path + "/index.html")
 	t, _ := template.New("index").Parse(tmplMonolithic)
-	w, _ := os.OpenFile(info.Path+"index.html", os.O_WRONLY|os.O_CREATE, 0600)
+	w, _ := os.OpenFile(info.Path+"/index.html", os.O_WRONLY|os.O_CREATE, 0600)
 	t.ExecuteTemplate(w, "index", infoM)
 }
 
@@ -107,5 +107,5 @@ func generateTOC(info *indexinfo.IndexInfoMonolithic) string {
 }
 
 func generateMain(info *indexinfo.IndexInfoMonolithic) string {
-	return "<h2>" + info.Name + "</h2"
+	return "<h2>" + info.Name + "</h2>"
 }

@@ -23,6 +23,7 @@ Options:
 `, os.Args[0])
 		flag.PrintDefaults()
 	}
+	opt_monolithic := flag.Bool("m", false, "Generate monolithic HTML.")
 	opt_version := flag.Bool("v", false, "Show version.")
 	flag.Parse()
 
@@ -40,5 +41,9 @@ Options:
 	root, _ := filepath.Abs(dir)
 
 	maker := indexmaker.New(root)
-	maker.Make()
+	if *opt_monolithic {
+		maker.MakeMonolithic()
+	} else {
+		maker.Make()
+	}
 }

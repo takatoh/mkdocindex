@@ -89,8 +89,8 @@ type infoMonolithic struct {
 func newInfoMonolithic(info *indexinfo.IndexInfoMonolithic) *infoMonolithic {
 	p := new(infoMonolithic)
 	p.Title = info.Name
-	p.TOC = generateTOC(info)
-	p.Main = generateMain(info)
+	p.TOC = genTOC(info)
+	p.Main = genMain(info)
 	return p
 }
 
@@ -102,10 +102,10 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 	t.ExecuteTemplate(w, "index", infoM)
 }
 
-func generateTOC(info *indexinfo.IndexInfoMonolithic) string {
+func genTOC(info *indexinfo.IndexInfoMonolithic) string {
 	return "<h2>Table of contents</h2>"
 }
 
-func generateMain(info *indexinfo.IndexInfoMonolithic) string {
+func genMain(info *indexinfo.IndexInfoMonolithic) string {
 	return "<h2>" + info.Name + "</h2>"
 }

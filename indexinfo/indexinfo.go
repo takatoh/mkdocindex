@@ -21,3 +21,26 @@ func New(path string, dirs []string, files []string) *IndexInfo {
 	}
 	return p
 }
+
+type IndexInfoMonolithic struct {
+	Path        string
+	Name        string
+	Directories []*IndexInfoMonolithic
+	Files       []string
+	Level       uint8
+}
+
+func NewMonolithic(path string, files []string, level uint8) *IndexInfoMonolithic {
+	p := new(IndexInfoMonolithic)
+	p.Path = path
+	p.Name = filepath.Base(path)
+	for _, f := range files {
+		p.Files = append(p.Files, filepath.Base(f))
+	}
+	if level > 6 {
+		p.Level = 0
+	} else {
+		p.Level = level
+	}
+	return p
+}

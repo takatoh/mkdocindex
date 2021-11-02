@@ -64,7 +64,8 @@ func (m *IndexMaker) read() {
 
 func (m *IndexMaker) transformToInfoMonolithic(level uint8, root string) *indexinfo.IndexInfoMonolithic {
 	relPath, _ := filepath.Rel(root, m.path)
-	info := indexinfo.NewMonolithic(relPath, m.files, level)
+	name := filepath.Base(m.path)
+	info := indexinfo.NewMonolithic(relPath, name, m.files, level)
 	for _, d := range m.directories {
 		info.Directories = append(info.Directories, d.transformToInfoMonolithic(level+1, root))
 	}

@@ -180,12 +180,13 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 func genTOC(info *indexinfo.IndexInfoMonolithic) string {
 	var toc string
 	toc += "<ul>\n"
-	toc += "<li>" + info.Name + "</li>\n"
+	toc += "<li>" + info.Name + "\n"
 	if len(info.Directories) > 0 {
 		for _, dir := range info.Directories {
 			toc += genTOC(dir)
 		}
 	}
+	toc += "</li>\n"
 	toc += "</ul>\n"
 	return toc
 }
@@ -205,10 +206,8 @@ func genMain(info *indexinfo.IndexInfoMonolithic) string {
 		content += "<h6>" + info.Name + "</h6>\n"
 		content += "<ul>\n"
 		content += genFileList(info.Files)
-		content += "<li>\n"
 		content += genDirList(info.Directories)
 		content += "</li>\n"
-		content += "</ul>\n"
 	} else {
 		content += "<ul>\n"
 		content += genDirList(info.Directories)
@@ -228,13 +227,16 @@ func genFileList(files []string) string {
 func genDirList(dirs []*indexinfo.IndexInfoMonolithic) string {
 	var dirlist string
 	for _, dir := range dirs {
-		dirlist += "<li>" + dir.Name + "</li>\n"
+		dirlist += "<li>" + dir.Name + "\n"
 		if len(dir.Files) > 0 {
 			dirlist += genFileList(dir.Files)
 		}
 		if len(dir.Directories) > 0 {
+			dirlist += "<ul>\n"
 			dirlist += genDirList(dir.Directories)
+			dirlist += "</ul>\n"
 		}
+		dirlist += "</li>\n"
 	}
 	return dirlist
 }

@@ -30,10 +30,10 @@ type IndexInfoMonolithic struct {
 	Level       uint8
 }
 
-func NewMonolithic(path string, files []string, level uint8) *IndexInfoMonolithic {
+func NewMonolithic(path string, name string, files []string, level uint8) *IndexInfoMonolithic {
 	p := new(IndexInfoMonolithic)
 	p.Path = path
-	p.Name = filepath.Base(path)
+	p.Name = name
 	for _, f := range files {
 		p.Files = append(p.Files, filepath.Base(f))
 	}

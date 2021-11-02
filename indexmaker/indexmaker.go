@@ -36,6 +36,11 @@ func (m *IndexMaker) Make() {
 	}
 }
 
+func (m *IndexMaker) MakeMonolithic() {
+	infoTree := m.convertInfoMonolithic(2)
+	htmlgenerator.GenerateMonolithic(infoTree)
+}
+
 func (m *IndexMaker) read() {
 	var entries []string
 
@@ -55,11 +60,6 @@ func (m *IndexMaker) read() {
 			m.files = append(m.files, f)
 		}
 	}
-}
-
-func (m *IndexMaker) MakeMonolithic() {
-	infoTree := m.convertInfoMonolithic(2)
-	htmlgenerator.GenerateMonolithic(infoTree)
 }
 
 func (m *IndexMaker) convertInfoMonolithic(level uint8) *indexinfo.IndexInfoMonolithic {

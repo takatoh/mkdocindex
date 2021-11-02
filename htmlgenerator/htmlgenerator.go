@@ -199,7 +199,7 @@ func genMain(info *indexinfo.IndexInfoMonolithic, id string) string {
 		attrId := "id=\"" + id + "\""
 		content += "<" + h + " " + attrId + ">" + info.Name + "</" + h + ">\n"
 		content += "<ul>\n"
-		content += genFileList(info.Files)
+		content += genFileList(info.Files, info.Path)
 		content += "</ul>\n"
 		for idx, dir := range info.Directories {
 			content += genMain(dir, buildId(id, idx))
@@ -208,7 +208,7 @@ func genMain(info *indexinfo.IndexInfoMonolithic, id string) string {
 		attrId := "id=\"" + id + "\""
 		content += "<h6 " + attrId + ">" + info.Name + "</h6>\n"
 		content += "<ul>\n"
-		content += genFileList(info.Files)
+		content += genFileList(info.Files, info.Path)
 		content += genDirList(info.Directories, id)
 		content += "</li>\n"
 	} else {
@@ -219,10 +219,11 @@ func genMain(info *indexinfo.IndexInfoMonolithic, id string) string {
 	return content
 }
 
-func genFileList(files []string) string {
+func genFileList(files []string, parentPath string) string {
 	var filelist string
 	for _, filename := range files {
-		filelist += "<li>" + filename + "</li>\n"
+		anchorQuoted := "\"" + parentPath + "/" + filename + "\""
+		filelist += "<li><a href=" + anchorQuoted + ">" + filename + "</a></li>\n"
 	}
 	return filelist
 }
@@ -233,7 +234,7 @@ func genDirList(dirs []*indexinfo.IndexInfoMonolithic, idPrefix string) string {
 		attrId := buildAttrId(idPrefix, idx)
 		dirlist += "<li " + attrId + ">" + dir.Name + "\n"
 		if len(dir.Files) > 0 {
-			dirlist += genFileList(dir.Files)
+			dirlist += genFileList(dir.Files, dir.Path)
 		}
 		if len(dir.Directories) > 0 {
 			dirlist += "<ul>\n"

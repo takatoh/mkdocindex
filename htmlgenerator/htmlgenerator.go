@@ -158,7 +158,7 @@ func newInfoMonolithic(info *indexinfo.IndexInfoMonolithic) *infoMonolithic {
 	p := new(infoMonolithic)
 	p.Title = info.Name
 	p.TOC = genTOC(info)
-	p.Main = genMain(info)
+	p.Main = genMain(info, "sec-0")
 	p.Style = styleMonolithic
 	return p
 }
@@ -191,26 +191,28 @@ func genTOC(info *indexinfo.IndexInfoMonolithic) string {
 	return toc
 }
 
-func genMain(info *indexinfo.IndexInfoMonolithic) string {
+func genMain(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
 	var content string
 	if info.Level < 6 {
 		h := "h" + strconv.Itoa(int(info.Level))
-		content += "<" + h + ">" + info.Name + "</" + h + ">\n"
+		attrId := "id=\"" + idPrefix + "\""
+		content += "<" + h + " " + attrId + ">" + info.Name + "</" + h + ">\n"
 		content += "<ul>\n"
 		content += genFileList(info.Files)
 		content += "</ul>\n"
-		for _, dir := range info.Directories {
-			content += genMain(dir)
+		for idx, dir := range info.Directories {
+			content += genMain(dir, idPrefix+"-"+strconv.Itoa(idx))
 		}
 	} else if info.Level == 6 {
-		content += "<h6>" + info.Name + "</h6>\n"
+		attrId := "id=\"" + idPrefix + "\""
+		content += "<h6 " + attrId + ">" + info.Name + "</h6>\n"
 		content += "<ul>\n"
 		content += genFileList(info.Files)
-		content += genDirList(info.Directories)
+		content += genDirList(info.Directories, idPrefix)
 		content += "</li>\n"
 	} else {
 		content += "<ul>\n"
-		content += genDirList(info.Directories)
+		content += genDirList(info.Directories, idPrefix)
 		content += "</ul>\n"
 	}
 	return content
@@ -224,16 +226,17 @@ func genFileList(files []string) string {
 	return filelist
 }
 
-func genDirList(dirs []*indexinfo.IndexInfoMonolithic) string {
+func genDirList(dirs []*indexinfo.IndexInfoMonolithic, idPrefix string) string {
 	var dirlist string
-	for _, dir := range dirs {
-		dirlist += "<li>" + dir.Name + "\n"
+	for idx, dir := range dirs {
+		attrId := "id=\"" + idPrefix + "-" + strconv.Itoa(int(idx)) + "\""
+		dirlist += "<li " + attrId + ">" + dir.Name + "\n"
 		if len(dir.Files) > 0 {
 			dirlist += genFileList(dir.Files)
 		}
 		if len(dir.Directories) > 0 {
 			dirlist += "<ul>\n"
-			dirlist += genDirList(dir.Directories)
+			dirlist += genDirList(dir.Directories, idPrefix+"-"+strconv.Itoa(int(idx)))
 			dirlist += "</ul>\n"
 		}
 		dirlist += "</li>\n"

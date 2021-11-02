@@ -177,7 +177,16 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 }
 
 func genTOC(info *indexinfo.IndexInfoMonolithic) string {
-	return "<h2>Table of contents</h2>"
+	var toc string
+	toc += "<ul>\n"
+	toc += "<li>" + info.Name + "</li>\n"
+	if len(info.Directories) > 0 {
+		for _, dir := range info.Directories {
+			toc += genTOC(dir)
+		}
+	}
+	toc += "</ul>\n"
+	return toc
 }
 
 func genMain(info *indexinfo.IndexInfoMonolithic) string {

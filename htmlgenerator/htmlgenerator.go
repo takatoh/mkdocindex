@@ -201,7 +201,7 @@ func genMain(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
 		content += genFileList(info.Files)
 		content += "</ul>\n"
 		for idx, dir := range info.Directories {
-			content += genMain(dir, idPrefix+"-"+strconv.Itoa(idx))
+			content += genMain(dir, buildId(idPrefix, idx))
 		}
 	} else if info.Level == 6 {
 		attrId := "id=\"" + idPrefix + "\""
@@ -229,17 +229,25 @@ func genFileList(files []string) string {
 func genDirList(dirs []*indexinfo.IndexInfoMonolithic, idPrefix string) string {
 	var dirlist string
 	for idx, dir := range dirs {
-		attrId := "id=\"" + idPrefix + "-" + strconv.Itoa(int(idx)) + "\""
+		attrId := buildAttrId(idPrefix, idx)
 		dirlist += "<li " + attrId + ">" + dir.Name + "\n"
 		if len(dir.Files) > 0 {
 			dirlist += genFileList(dir.Files)
 		}
 		if len(dir.Directories) > 0 {
 			dirlist += "<ul>\n"
-			dirlist += genDirList(dir.Directories, idPrefix+"-"+strconv.Itoa(int(idx)))
+			dirlist += genDirList(dir.Directories, buildId(idPrefix, idx))
 			dirlist += "</ul>\n"
 		}
 		dirlist += "</li>\n"
 	}
 	return dirlist
+}
+
+func buildAttrId(prefix string, idx int) string {
+	return "id=\"" + buildId(prefix, idx) + "\""
+}
+
+func buildId(prefix string, idx int) string {
+	return prefix + "-" + strconv.Itoa(int(idx))
 }

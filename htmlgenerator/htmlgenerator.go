@@ -3,6 +3,7 @@ package htmlgenerator
 import (
 	"html/template"
 	"os"
+	"strconv"
 
 	"github.com/takatoh/mkdocindex/indexinfo"
 )
@@ -190,5 +191,50 @@ func genTOC(info *indexinfo.IndexInfoMonolithic) string {
 }
 
 func genMain(info *indexinfo.IndexInfoMonolithic) string {
-	return "<h2>" + info.Name + "</h2>"
+	var content string
+	if info.Level < 6 {
+		h := "h" + strconv.Itoa(int(info.Level))
+		content += "<" + h + ">" + info.Name + "</" + h + ">\n"
+		content += "<ul>\n"
+		content += genFileList(info.Files)
+		content += "</ul>\n"
+		for _, dir := range info.Directories {
+			content += genMain(dir)
+		}
+	} else if info.Level == 6 {
+		content += "<h6>" + info.Name + "</h6>\n"
+		content += "<ul>\n"
+		content += genFileList(info.Files)
+		content += "<li>\n"
+		content += genDirList(info.Directories)
+		content += "</li>\n"
+		content += "</ul>\n"
+	} else {
+		content += "<ul>\n"
+		content += genDirList(info.Directories)
+		content += "</ul>\n"
+	}
+	return content
+}
+
+func genFileList(files []string) string {
+	var filelist string
+	for _, filename := range files {
+		filelist += "<li>" + filename + "</li>\n"
+	}
+	return filelist
+}
+
+func genDirList(dirs []*indexinfo.IndexInfoMonolithic) string {
+	var dirlist string
+	for _, dir := range dirs {
+		dirlist += "<li>" + dir.Name + "</li>\n"
+		if len(dir.Files) > 0 {
+			dirlist += genFileList(dir.Files)
+		}
+		if len(dir.Directories) > 0 {
+			dirlist += genDirList(dir.Directories)
+		}
+	}
+	return dirlist
 }

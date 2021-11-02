@@ -77,6 +77,7 @@ const (
       {{.Main|safehtml}}
     </div>
     </main>
+    {{.Script|scripttag}}
   </body>
 </html>
 `
@@ -145,13 +146,76 @@ main div#container {
   background-color: yellow;
 }
 `
+	scriptMonolithic = `const highlight = (elem, pat) => {
+  const innerHighlight = (node, pat) => {
+    let skip = 0;
+    if (node.nodeType === 3) {
+      const pos = node.data.toUpperCase().indexOf(pat);
+      if (pos >= 0) {
+        const spannode = document.createElement("span");
+        spannode.className = "highlight";
+        const middlebit = node.splitText(pos);
+        const endbit = middlebit.splitText(pat.length);
+        const middleclone = middlebit.cloneNode(true);
+        spannode.appendChild(middleclone);
+        middlebit.replaceWith(spannode);
+        skip += 1;
+      }
+    } else if (node.nodeType === 1 && node.childNodes && !/script|style/i.test(node.tagName)) {
+      // note: nodeType === 1 means ELEMENT_NODE.
+      for (let i = 0; i < node.childNodes.length; ++i) {
+        i += innerHighlight(node.childNodes[i], pat);
+      }
+    }
+    return skip;
+  };
+  elem.childNodes.forEach((e) => {
+    innerHighlight(e, pat.toUpperCase());
+  });
+};
+
+const removeHighlight = (elem) => {
+  elem.querySelectorAll("span.highlight").forEach((e) => {
+    const inner = e.innerHTML;
+    e.replaceWith(inner);
+  });
+};
+
+const doHighlight = () => {
+  const tree = document.getElementById("container");
+  // remove highlights
+  removeHighlight(tree);
+  // split to words by whitespaces
+  const words = document.getElementById("search-word").value.trim().split(/\s+/);
+  // highlight words
+  for (let word of words) {
+    highlight(tree, word);
+  }
+  // scroll to first highlight
+  const firstHighlight = document.getElementsByClassName("highlight")[0];
+  const ypos = firstHighlight.getBoundingClientRect().top + window.pageYOffset;
+  window.scrollTo({
+    top: ypos,
+    left: 0,
+    behavior: "smooth"
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("search-button").addEventListener("click", doHighlight, false);
+  document.getElementById("reset-button").addEventListener("click", () => {
+    location.reload(true);
+  });
+}, false);
+`
 )
 
 type infoMonolithic struct {
-	Title string
-	TOC   string
-	Main  string
-	Style string
+	Title  string
+	TOC    string
+	Main   string
+	Style  string
+	Script string
 }
 
 func newInfoMonolithic(info *indexinfo.IndexInfoMonolithic) *infoMonolithic {
@@ -160,6 +224,7 @@ func newInfoMonolithic(info *indexinfo.IndexInfoMonolithic) *infoMonolithic {
 	p.TOC = genTOC(info, "sec-0")
 	p.Main = genMain(info, "sec-0")
 	p.Style = styleMonolithic
+	p.Script = scriptMonolithic
 	return p
 }
 
@@ -169,6 +234,9 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 		"safehtml": func(text string) template.HTML { return template.HTML(text) },
 		"styletag": func(text string) template.HTML {
 			return template.HTML("<style>\n" + text + "</style>")
+		},
+		"scripttag": func(text string) template.HTML {
+			return template.HTML("<script>\n" + text + "</script>")
 		},
 	}
 	os.Remove(info.Path + "/index.html")

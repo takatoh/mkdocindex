@@ -177,14 +177,14 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 	t.ExecuteTemplate(w, "index", infoM)
 }
 
-func genTOC(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
+func genTOC(info *indexinfo.IndexInfoMonolithic, id string) string {
 	var toc string
-	anchorQuoted := "\"#" + idPrefix + "\""
+	anchorQuoted := "\"#" + id + "\""
 	toc += "<ul>\n"
 	toc += "<li><a href=" + anchorQuoted + ">" + info.Name + "</a>\n"
 	if len(info.Directories) > 0 {
 		for idx, dir := range info.Directories {
-			toc += genTOC(dir, buildId(idPrefix, idx))
+			toc += genTOC(dir, buildId(id, idx))
 		}
 	}
 	toc += "</li>\n"
@@ -192,28 +192,28 @@ func genTOC(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
 	return toc
 }
 
-func genMain(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
+func genMain(info *indexinfo.IndexInfoMonolithic, id string) string {
 	var content string
 	if info.Level < 6 {
 		h := "h" + strconv.Itoa(int(info.Level))
-		attrId := "id=\"" + idPrefix + "\""
+		attrId := "id=\"" + id + "\""
 		content += "<" + h + " " + attrId + ">" + info.Name + "</" + h + ">\n"
 		content += "<ul>\n"
 		content += genFileList(info.Files)
 		content += "</ul>\n"
 		for idx, dir := range info.Directories {
-			content += genMain(dir, buildId(idPrefix, idx))
+			content += genMain(dir, buildId(id, idx))
 		}
 	} else if info.Level == 6 {
-		attrId := "id=\"" + idPrefix + "\""
+		attrId := "id=\"" + id + "\""
 		content += "<h6 " + attrId + ">" + info.Name + "</h6>\n"
 		content += "<ul>\n"
 		content += genFileList(info.Files)
-		content += genDirList(info.Directories, idPrefix)
+		content += genDirList(info.Directories, id)
 		content += "</li>\n"
 	} else {
 		content += "<ul>\n"
-		content += genDirList(info.Directories, idPrefix)
+		content += genDirList(info.Directories, id)
 		content += "</ul>\n"
 	}
 	return content

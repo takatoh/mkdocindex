@@ -157,7 +157,7 @@ type infoMonolithic struct {
 func newInfoMonolithic(info *indexinfo.IndexInfoMonolithic) *infoMonolithic {
 	p := new(infoMonolithic)
 	p.Title = info.Name
-	p.TOC = genTOC(info)
+	p.TOC = genTOC(info, "sec-0")
 	p.Main = genMain(info, "sec-0")
 	p.Style = styleMonolithic
 	return p
@@ -177,13 +177,14 @@ func GenerateMonolithic(info *indexinfo.IndexInfoMonolithic) {
 	t.ExecuteTemplate(w, "index", infoM)
 }
 
-func genTOC(info *indexinfo.IndexInfoMonolithic) string {
+func genTOC(info *indexinfo.IndexInfoMonolithic, idPrefix string) string {
 	var toc string
+	anchorQuoted := "\"#" + idPrefix + "\""
 	toc += "<ul>\n"
-	toc += "<li>" + info.Name + "\n"
+	toc += "<li><a href=" + anchorQuoted + ">" + info.Name + "</a>\n"
 	if len(info.Directories) > 0 {
-		for _, dir := range info.Directories {
-			toc += genTOC(dir)
+		for idx, dir := range info.Directories {
+			toc += genTOC(dir, buildId(idPrefix, idx))
 		}
 	}
 	toc += "</li>\n"
